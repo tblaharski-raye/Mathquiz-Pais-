@@ -193,7 +193,7 @@
       <button class="back-btn" onclick="goHome()">&#8592;</button>
       <div class="title" id="modeTitle">🔢 Math Stars</div>
     </div>
-    <div class="score-badge" id="scoreBadge">⭐ 0 / 9</div>
+    <div class="score-badge" id="scoreBadge">⭐ 0 / 13</div>
   </div>
   <div id="progress-section">
     <div class="dots" id="dots"></div>
@@ -201,7 +201,7 @@
     <div class="timer-lbl" id="timerLbl">NEXT CHECK-IN 15:00</div>
   </div>
   <div id="question-box">
-    <div class="q-label" id="qLabel">QUESTION 1 OF 10</div>
+    <div class="q-label" id="qLabel">QUESTION 1 OF 15</div>
     <div id="equation"></div>
     <div id="story"></div>
     <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Listen and find the word</div>
@@ -235,7 +235,7 @@
   <div class="res-emoji" id="resEmoji">🏆</div>
   <div class="res-title" id="resTitle">Amazing!</div>
   <div class="res-sub"   id="resSub"></div>
-  <div class="res-score" id="resScore">10</div>
+  <div class="res-score" id="resScore">15</div>
   <div class="res-label" id="resLabel">correct this round</div>
   <button class="res-btn btn-play"  onclick="restartQuiz()">Play Again! 🎉</button>
   <button class="res-btn btn-close" id="closeBtn" onclick="closeApp()">&#10003; All done — Close App</button>
@@ -257,12 +257,12 @@
 </div>
 
 <script>
-const CORRECT_NEEDED=9, CHECKIN_MINUTES=15, MATH_Q=10, READ_Q=10;
+const CORRECT_NEEDED=13, CHECKIN_MINUTES=15, MATH_Q=15, READ_Q=15;
 let mode='',qIdx=0,roundOk=0,totalOk=0,totalAns=0;
 let usedWords=new Set();
 let hist=[],rightAns=0,locked=false,typed='';
 let timerSecs=CHECKIN_MINUTES*60,lastAns=-1,isStory=false;
-let curWord='',totalQ=10;
+let curWord='',totalQ=15;
 document.getElementById('ciMinutes').textContent=CHECKIN_MINUTES;
 
 const WORDS=[
@@ -308,15 +308,21 @@ const SUB_T=[
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function twoNames(){const i=Math.floor(Math.random()*NAMES.length);let j=Math.floor(Math.random()*(NAMES.length-1));if(j>=i)j++;return[NAMES[i],NAMES[j]];}
 function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
-function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<2){const r=Math.floor(Math.random()*MATH_Q);if(!ix.includes(r))ix.push(r);}ix.forEach(i=>p[i]=true);return p;}
+function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){const r=Math.floor(Math.random()*MATH_Q);if(!ix.includes(r))ix.push(r);}ix.forEach(i=>p[i]=true);return p;}
 let plan=makeplan();
 
 function speakWord(){
   if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(curWord);
-  u.rate=0.85;u.pitch=1.1;
-  window.speechSynthesis.speak(u);
+  const u1=new SpeechSynthesisUtterance(curWord+'.');
+  u1.rate=0.65;u1.pitch=0.95;u1.volume=1;
+  const pause=new SpeechSynthesisUtterance('...');
+  pause.rate=0.1;pause.volume=0;
+  const u2=new SpeechSynthesisUtterance(curWord+'.');
+  u2.rate=0.65;u2.pitch=0.95;u2.volume=1;
+  window.speechSynthesis.speak(u1);
+  window.speechSynthesis.speak(pause);
+  window.speechSynthesis.speak(u2);
 }
 
 function startMode(m){
@@ -459,13 +465,12 @@ function newReadQ(){
 }
 
 function newMathQ(){
-  document.getElementById('reading-word').style.display='none';
   document.getElementById('listenLabel').style.display='none';
   document.getElementById('hearBtn').className='hear-btn';
   document.getElementById('word-choices').className='';
   document.getElementById('numpad').style.display='grid';
   document.getElementById('reading-spacer').style.display='none';
-  isStory=plan[qIdx];
+  isStory=(plan[qIdx]===true);
   let a,b,add;
   do{
     add=Math.random()>0.4;
