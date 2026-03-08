@@ -318,22 +318,23 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  if(!window.speechSynthesis)return;
-  // Cancel and wait a moment before speaking — Fire OS needs this
-  window.speechSynthesis.cancel();
-  setTimeout(()=>{
-    const u1=new SpeechSynthesisUtterance(curWord);
-    u1.rate=0.65; u1.pitch=0.95; u1.volume=1;
-    u1.onend=()=>{
-      // Wait 600ms then say it again
-      setTimeout(()=>{
-        const u2=new SpeechSynthesisUtterance(curWord);
-        u2.rate=0.65; u2.pitch=0.95; u2.volume=1;
-        window.speechSynthesis.speak(u2);
-      }, 600);
-    };
-    window.speechSynthesis.speak(u1);
-  }, 150);
+  // Fire OS: stop anything playing, then speak after a short delay
+  try {
+    window.speechSynthesis.cancel();
+  } catch(e){}
+  setTimeout(function(){
+    try {
+      var msg = new SpeechSynthesisUtterance();
+      msg.text = curWord;
+      msg.lang = 'en-US';
+      msg.rate = 0.8;
+      msg.pitch = 1.0;
+      msg.volume = 1.0;
+      window.speechSynthesis.speak(msg);
+    } catch(e){
+      alert('Speech not available: ' + e.message);
+    }
+  }, 300);
 }
 
 function startMode(m){
