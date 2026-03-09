@@ -266,7 +266,7 @@ font-family:‘Fredoka One’,cursive; font-size:1.2rem; padding:12px; cursor:po
 const CORRECT_NEEDED=13, CHECKIN_MINUTES=15, MATH_Q=15, READ_Q=15;
 let mode='',qIdx=0,roundOk=0,totalOk=0,totalAns=0;
 let usedWords=new Set();
-let hist=[],rightAns=0,locked=false,typed='';
+let hist=[],rightAns=0,locked=false,typed='',firstTry=true;
 let timerSecs=CHECKIN_MINUTES*60,lastAns=-1,isStory=false;
 let curWord='',totalQ=10;
 document.getElementById('ciMinutes').textContent=CHECKIN_MINUTES;
@@ -382,11 +382,11 @@ function numDel(){if(locked)return;typed=typed.slice(0,-1);showAnswer();}
 function submitAnswer(){
   if(locked||typed==='')return;
   const ok=parseInt(typed)===rightAns;
-  locked=true;totalAns++;hist.push(ok);
   const disp=document.getElementById('answer-display');
   const slot=document.getElementById('eq-slot');
   const fb=document.getElementById('feedback');
   if(ok){
+    locked=true;totalAns++;hist.push(true);
     roundOk++;totalOk++;
     if(isStory)disp.className='correct';else if(slot)slot.className='eq-slot correct';
     fb.className='ok';
@@ -394,13 +394,28 @@ function submitAnswer(){
     document.getElementById('fbMsg').textContent=['Great job!','Awesome!','You got it!','Superstar!','Brilliant!'][~~(Math.random()*5)];
     document.getElementById('scoreBadge').textContent='⭐ '+totalOk+' / '+CORRECT_NEEDED;
     burstStars();
-  } else {
-    if(isStory)disp.className='wrong';else if(slot)slot.className='eq-slot wrong';
+    firstTry=true;
+    setTimeout(()=>{qIdx++;qIdx>=totalQ?showResults():newQuestion();},1100);
+  } else if(firstTry){
+    // Wrong on first try — shake and let them try again
+    firstTry=false;
+    typed='';
+    if(isStory){disp.className='wrong';setTimeout(()=>{disp.className='empty';disp.textContent='?';},600);}
+    else if(slot){slot.className='eq-slot wrong';setTimeout(()=>{slot.className='eq-slot empty';slot.textContent='?';},600);}
     fb.className='bad';
     document.getElementById('fbIcon').textContent='🤔';
+    document.getElementById('fbMsg').textContent='Try again!';
+    setTimeout(()=>{fb.className='';},900);
+  } else {
+    // Wrong on second try — move on
+    locked=true;totalAns++;hist.push(false);
+    if(isStory)disp.className='wrong';else if(slot)slot.className='eq-slot wrong';
+    fb.className='bad';
+    document.getElementById('fbIcon').textContent='😔';
     document.getElementById('fbMsg').textContent='It was '+rightAns+'!';
+    firstTry=true;
+    setTimeout(()=>{qIdx++;qIdx>=totalQ?showResults():newQuestion();},1300);
   }
-  setTimeout(()=>{qIdx++;qIdx>=totalQ?showResults():newQuestion();},1100);
 }
 
 function chooseWord(chosen,btnEl){
@@ -431,6 +446,8 @@ function chooseWord(chosen,btnEl){
 function newQuestion(){
   locked=false;typed='';
   document.getElementById('feedback').className='';
+  document.getElementById('word-choices').className='';
+  document.getElementById('word-choices').innerHTML='';
   document.getElementById('qLabel').textContent='QUESTION '+(qIdx+1)+' OF '+totalQ;
   const dotsEl=document.getElementById('dots');
   dotsEl.innerHTML='';
@@ -487,6 +504,7 @@ function newMathQ(){
   document.getElementById('word-choices').className='';
   document.getElementById('numpad').style.display='grid';
   document.getElementById('reading-spacer').style.display='none';
+  firstTry=true;
   isStory=(plan[qIdx]===true);
   let a,b,add;
   do{
