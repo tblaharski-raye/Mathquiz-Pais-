@@ -209,7 +209,7 @@ font-family:‘Fredoka One’,cursive; font-size:1.2rem; padding:12px; cursor:po
     <div id="equation"></div>
     <div id="story"></div>
     <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Listen and find the word</div>
-    <button class="hear-btn" id="hearBtn" onclick="speakWord()" ontouchstart="speakWord()">🔊 Tap to hear the word</button>
+    <button class="hear-btn" id="hearBtn" ontouchstart="event.preventDefault();speakWord()">🔊 Tap to hear the word</button>
     <div id="feedback">
       <div class="fb-icon" id="fbIcon"></div>
       <div class="fb-msg"  id="fbMsg"></div>
@@ -318,14 +318,15 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  // Use Fully Kiosk REST API for TTS
   var text = encodeURIComponent(curWord);
-  var img1 = new Image();
-  img1.src = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
-  // Repeat after a pause
+  var url = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
+  var x = new XMLHttpRequest();
+  x.open('GET', url, true);
+  x.send();
   setTimeout(function(){
-    var img2 = new Image();
-    img2.src = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
+    var x2 = new XMLHttpRequest();
+    x2.open('GET', url, true);
+    x2.send();
   }, 1800);
 }
 
