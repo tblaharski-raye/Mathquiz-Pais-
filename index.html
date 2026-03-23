@@ -318,14 +318,26 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  let info = '';
-  info += 'window.fully exists: ' + (!!window.fully) + '\n';
-  if(window.fully){
-    info += 'textToSpeech fn: ' + (typeof window.fully.textToSpeech) + '\n';
-  }
-  info += 'speechSynthesis: ' + (typeof window.speechSynthesis) + '\n';
-  info += 'SpeechSynthesisUtterance: ' + (typeof SpeechSynthesisUtterance) + '\n';
-  alert(info);
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  setTimeout(function(){
+    var u = new SpeechSynthesisUtterance(curWord);
+    u.lang = 'en-US';
+    u.rate = 0.75;
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    u.onend = function(){
+      setTimeout(function(){
+        var u2 = new SpeechSynthesisUtterance(curWord);
+        u2.lang = 'en-US';
+        u2.rate = 0.75;
+        u2.pitch = 1.0;
+        u2.volume = 1.0;
+        window.speechSynthesis.speak(u2);
+      }, 800);
+    };
+    window.speechSynthesis.speak(u);
+  }, 200);
 }
 
 function startMode(m){
@@ -439,6 +451,8 @@ function newQuestion(){
   document.getElementById('feedback').className='';
   document.getElementById('word-choices').className='';
   document.getElementById('word-choices').innerHTML='';
+  document.getElementById('hearBtn').className='hear-btn';
+  document.getElementById('listenLabel').style.display='none';
   document.getElementById('qLabel').textContent='QUESTION '+(qIdx+1)+' OF '+totalQ;
   const dotsEl=document.getElementById('dots');
   dotsEl.innerHTML='';
