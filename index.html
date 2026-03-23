@@ -209,7 +209,7 @@ font-family:‘Fredoka One’,cursive; font-size:1.2rem; padding:12px; cursor:po
     <div id="equation"></div>
     <div id="story"></div>
     <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Listen and find the word</div>
-    <button class="hear-btn" id="hearBtn" onclick="speakWord()">🔊 Tap to hear the word</button>
+    <button class="hear-btn" id="hearBtn" onclick="speakWord()" ontouchstart="speakWord()">🔊 Tap to hear the word</button>
     <div id="feedback">
       <div class="fb-icon" id="fbIcon"></div>
       <div class="fb-msg"  id="fbMsg"></div>
