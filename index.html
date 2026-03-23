@@ -208,13 +208,17 @@ font-family:‘Fredoka One’,cursive; font-size:1.2rem; padding:12px; cursor:po
     <div class="q-label" id="qLabel">QUESTION 1 OF 10</div>
     <div id="equation"></div>
     <div id="story"></div>
-    <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Listen and find the word</div>
-    <button class="hear-btn" id="hearBtn" onclick="speakWord()" ontouchstart="event.preventDefault();speakWord()">🔊 Tap to hear the word</button>
-    <div id="feedback">
-      <div class="fb-icon" id="fbIcon"></div>
-      <div class="fb-msg"  id="fbMsg"></div>
-    </div>
+
+```
+<div id="feedback">
+  <div class="fb-icon" id="fbIcon"></div>
+  <div class="fb-msg"  id="fbMsg"></div>
+</div>
+```
+
   </div>
+  <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0;">Listen and find the word</div>
+  <button class="hear-btn" id="hearBtn" onclick="speakWord()" ontouchstart="event.preventDefault();speakWord()">🔊 Tap to hear the word</button>
   <div id="answer-display" class="empty" style="display:none">?</div>
   <div id="word-choices"></div>
   <div id="numpad">
