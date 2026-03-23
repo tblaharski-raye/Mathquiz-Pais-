@@ -318,18 +318,15 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  if(!window.speechSynthesis){alert('no speechSynthesis');return;}
-  window.speechSynthesis.cancel();
+  // Use Fully Kiosk REST API for TTS
+  var text = encodeURIComponent(curWord);
+  var img1 = new Image();
+  img1.src = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
+  // Repeat after a pause
   setTimeout(function(){
-    var u = new SpeechSynthesisUtterance(curWord);
-    u.lang = 'en-US';
-    u.rate = 0.75;
-    u.pitch = 1.0;
-    u.volume = 1.0;
-    u.onerror = function(e){ alert('Speech error: ' + e.error); };
-    u.onstart = function(){ alert('Speech started!'); };
-    window.speechSynthesis.speak(u);
-  }, 200);
+    var img2 = new Image();
+    img2.src = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
+  }, 1800);
 }
 
 function startMode(m){
