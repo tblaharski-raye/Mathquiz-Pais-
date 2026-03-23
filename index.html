@@ -209,7 +209,7 @@ font-family:‘Fredoka One’,cursive; font-size:1.2rem; padding:12px; cursor:po
     <div id="equation"></div>
     <div id="story"></div>
     <div class="q-sublabel" id="listenLabel" style="display:none;font-size:0.7rem;color:#bbb;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Listen and find the word</div>
-    <button class="hear-btn" id="hearBtn" ontouchstart="event.preventDefault();speakWord()">🔊 Tap to hear the word</button>
+    <button class="hear-btn" id="hearBtn" onclick="speakWord()" ontouchstart="event.preventDefault();speakWord()">🔊 Tap to hear the word</button>
     <div id="feedback">
       <div class="fb-icon" id="fbIcon"></div>
       <div class="fb-msg"  id="fbMsg"></div>
@@ -318,16 +318,21 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  var text = encodeURIComponent(curWord);
-  var url = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
-  var x = new XMLHttpRequest();
-  x.open('GET', url, true);
-  x.send();
-  setTimeout(function(){
-    var x2 = new XMLHttpRequest();
-    x2.open('GET', url, true);
-    x2.send();
-  }, 1800);
+  // Fully Kiosk PLUS JS interface
+  if(window.fully && typeof window.fully.textToSpeech === 'function'){
+    window.fully.textToSpeech(curWord);
+    setTimeout(function(){ window.fully.textToSpeech(curWord); }, 1800);
+    return;
+  }
+  // Fallback for non-Fully browsers (e.g. Silk)
+  if(window.speechSynthesis && typeof SpeechSynthesisUtterance !== 'undefined'){
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      var u = new SpeechSynthesisUtterance(curWord);
+      u.lang='en-US'; u.rate=0.8; u.pitch=1.0; u.volume=1.0;
+      window.speechSynthesis.speak(u);
+    }, 200);
+  }
 }
 
 function startMode(m){
