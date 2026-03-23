@@ -318,14 +318,14 @@ function makeplan(){const p=Array(MATH_Q).fill(false),ix=[];while(ix.length<3){c
 let plan=makeplan();
 
 function speakWord(){
-  // Use Fully Kiosk's built-in TTS API — bypasses Fire OS WebView speech limitations
-  const text = encodeURIComponent(curWord);
-  const url = 'http://192.168.68.68:2323/?cmd=textToSpeech&text=' + text + '&password=85757';
-  fetch(url).catch(function(){});
-  // Repeat the word after a short pause
-  setTimeout(function(){
-    fetch(url).catch(function(){});
-  }, 1800);
+  let info = '';
+  info += 'window.fully exists: ' + (!!window.fully) + '\n';
+  if(window.fully){
+    info += 'textToSpeech fn: ' + (typeof window.fully.textToSpeech) + '\n';
+  }
+  info += 'speechSynthesis: ' + (typeof window.speechSynthesis) + '\n';
+  info += 'SpeechSynthesisUtterance: ' + (typeof SpeechSynthesisUtterance) + '\n';
+  alert(info);
 }
 
 function startMode(m){
